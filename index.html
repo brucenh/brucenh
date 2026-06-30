@@ -2,23 +2,38 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bruce N.H.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  ___ reset ___
+  /* reset */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  ___ base ___
+  /* theme variables — default is dark (black bg / white text) */
+  :root {
+    --bg: #000000;
+    --fg: #ffffff;
+  }
+  :root.light {
+    --bg: #ffffff;
+    --fg: #000000;
+  }
+
+  /* base */
   body {
-    background: #ffffff;
-    color: #000000;
-    font-family: 'Courier New', Courier, monospace;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'Ubuntu Mono', 'DejaVu Sans Mono', Menlo, Consolas, monospace;
     line-height: 1.6;
     padding: 60px 20px;
     max-width: 640px;
     margin: 0 auto;
+    transition: background 0.2s ease, color 0.2s ease;
   }
 
-  ___ headers ___
+  /* headers */
   h1 {
     font-size: 1.4rem;
     font-weight: 700;
@@ -40,11 +55,10 @@
     letter-spacing: 0.05em;
     margin-top: 36px;
     margin-bottom: 12px;
-    border-bottom: 2px solid #000000;
     padding-bottom: 4px;
   }
 
-  ___ links ___
+  /* links */
   ul {
     list-style: none;
   }
@@ -54,30 +68,71 @@
   }
 
   a {
-    color: #000000;
+    color: var(--fg);
     font-weight: 700;
     text-decoration: none;
-    border-bottom: 1px solid #000000;
   }
 
   a:hover {
-    background: #000000;
-    color: #ffffff;
+    background: var(--fg);
+    color: var(--bg);
   }
 
   .label {
     font-weight: 400;
   }
 
-  ___ footer ___
+  /* theme toggle */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    color: var(--fg);
+    border: 1px solid var(--fg);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
+  /* footer */
   footer {
     margin-top: 60px;
     font-size: 0.8rem;
     font-weight: 400;
   }
+
+  /* blinking terminal cursor — decorative only */
+  .cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.1em;
+    background: var(--fg);
+    vertical-align: text-bottom;
+    animation: blink 1s steps(1) infinite;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @keyframes blink {
+    0%, 50%   { opacity: 1; }
+    50.01%, 100% { opacity: 0; }
+  }
 </style>
 </head>
 <body>
+
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color scheme">Light</button>
 
   <h1>Bruce N.H.</h1>
   <div class="subtitle">mechanistic interpretability / quantitative systems</div>
@@ -91,8 +146,33 @@
   </ul>
 
   <footer>
-    last updated 2026
+    <span class="cursor" aria-hidden="true"></span>
   </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var toggle = document.getElementById('themeToggle');
+
+      // restore saved preference
+      var saved = localStorage.getItem('theme');
+      if (saved === 'light') {
+        root.classList.add('light');
+      }
+
+      function syncLabel() {
+        var isLight = root.classList.contains('light');
+        toggle.textContent = isLight ? 'Dark' : 'Light';
+      }
+      syncLabel();
+
+      toggle.addEventListener('click', function () {
+        root.classList.toggle('light');
+        localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark');
+        syncLabel();
+      });
+    })();
+  </script>
 
 </body>
 </html>
