@@ -15,10 +15,12 @@
   :root {
     --bg: #000000;
     --fg: #ffffff;
+    --building-fg: var(--fg);
   }
   :root.light {
     --bg: #ffffff;
     --fg: #000000;
+    --building-fg: #00008b; /* deep blue in light mode */
   }
 
   /* base */
@@ -112,6 +114,12 @@
     font-weight: 400;
   }
 
+  /* typed "building at " text */
+  .building {
+    color: var(--building-fg);
+    transition: color 0.2s ease;
+  }
+
   /* blinking terminal cursor — decorative only */
   .cursor {
     display: inline-block;
@@ -146,7 +154,7 @@
   </ul>
 
   <footer>
-    <span class="cursor" aria-hidden="true"></span>
+    <span class="building" id="building"></span><span class="cursor" aria-hidden="true"></span>
   </footer>
 
   <script>
@@ -171,6 +179,18 @@
         localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark');
         syncLabel();
       });
+
+      // type out "building at " on load, leaving the cursor at the end
+      var building = document.getElementById('building');
+      var text = 'building at ';
+      var i = 0;
+      (function type() {
+        if (i < text.length) {
+          building.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, 90);
+        }
+      })();
     })();
   </script>
 
